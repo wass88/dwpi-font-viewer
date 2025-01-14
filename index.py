@@ -119,9 +119,7 @@ def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
         grid_items = "\n".join(
             [
                 f'<div class="grid-item"><span class="gj-code">{
-                    row.MJ文字図形}</span>{row.DWPI明朝文字}'
-                f'{f"<span class=\"seiji-code\">{
-                    row.正字1CD}</span>" if pd.notna(row.正字1CD) else ""}</div>'
+                    row.MJ文字図形}</span>{row.DWPI明朝文字}</div>'
                 for _, row in group.iterrows()
             ]
         )
