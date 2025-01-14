@@ -27,7 +27,7 @@ def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>行政事務標準当用明朝フォントビューア</title>
+        <title>非公式行政事務標準当用明朝フォントビューア</title>
         <style>
             @font-face {{
                 font-family: 'DWPIMincho';
@@ -70,10 +70,11 @@ def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
         </style>
     </head>
     <body>
-        <h1>行政事務標準当用明朝フォントビューア</h1>
+        <h1>非公式行政事務標準当用明朝フォントビューア</h1>
         <div class="links">
             <p><a href="https://www.digitalwidearea.org/dwpi_mincho" target="_blank">DWPI Mincho</a></p>
             <p><a href="https://drive.google.com/file/d/1DZCewoIPi9hccEMAC1PeXFRfx4HMhBMX/view" target="_blank">フォントライセンス</a></p>
+            <p>これは非公式のビューアです。一切の保証をするものではありません。</p>
         </div>
         <div class="grid">
     """
@@ -105,6 +106,6 @@ def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
 if __name__ == "__main__":
     csv_path = "dwpi_dict.csv"  # Input CSV file
     woff2_font_path = "DWPIMincho.woff2"  # Path to the WOFF2 font
-    output_html = "output.html"  # Path to save the generated HTML
+    output_html = "dist/index.html"  # Path to save the generated HTML
 
     csv_to_html_grouped(csv_path, woff2_font_path, output_html)
