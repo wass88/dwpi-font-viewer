@@ -2,6 +2,23 @@ import os
 import pandas as pd
 
 
+def get_ivs_code(char):
+    """
+    Get the IVS (Ideographic Variation Sequence) code for a given character.
+
+    Parameters:
+        char (str): A single character.
+
+    Returns:
+        tuple: (Main Unicode codepoint, IVS code) where IVS code is empty if not applicable.
+    """
+    if len(char) == 1:
+        return (f"U+{ord(char):X}", "")
+    elif len(char) == 2:
+        return (f"U+{ord(char[0]):X}", f"U+{ord(char[1]):X}")
+    return ("", "")
+
+
 def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
     """
     Converts a CSV file to an HTML grouped view using a specified WOFF2 font.
@@ -17,8 +34,7 @@ def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
     # Load the CSV data
     df = pd.read_csv(csv_path)
 
-    # Group by '関連文字' and sort by '総画数'
-    grouped = df.sort_values('総画数').groupby('関連文字')
+    grouped = df.groupby('関連文字')
 
     # HTML header with embedded WOFF2 font
     html_header = f"""
@@ -46,11 +62,18 @@ def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
             }}
             .grid-item {{
                 text-align: center;
-                padding: 20px;
+                padding: 10px 20px;
                 border: 1px solid #ddd;
                 border-radius: 5px;
                 background-color: #f9f9f9;
                 font-size: 48px;
+                line-height: 1;
+            }}
+            .main-code, .ivs-code, .gj-code, .seiji-code {{
+                font-size: 12px;
+                color: #777;
+                margin-top: 5px;
+                display: block;
             }}
             .related-item {{
                 font-weight: bold;
@@ -82,11 +105,24 @@ def csv_to_html_grouped(csv_path, woff2_font_path, output_html):
     # Generate grouped HTML blocks
     grouped_html = ""
     for related, group in grouped:
+        main_code, ivs_code = get_ivs_code(related)
+        grouped_html += f'<div class="grid-item related-item">'
+        if main_code:
+            grouped_html += f'<span class="main-code">{main_code}</span>'
+        grouped_html += related
+        if ivs_code:
+            grouped_html += f'<span class="ivs-code">{ivs_code}</span>'
+        else:
+            grouped_html += f'<span class="ivs-code">.</span>'
+
+        grouped_html += '</div>'
         grid_items = "\n".join(
             [
-                f'<div class="grid-item related-item">{
-                    related}</div>' if idx == 0 else f'<div class="grid-item">{row.DWPI明朝文字}</div>'
-                for idx, row in enumerate(group.itertuples())
+                f'<div class="grid-item"><span class="gj-code">{
+                    row.MJ文字図形}</span>{row.DWPI明朝文字}'
+                f'{f"<span class=\"seiji-code\">{
+                    row.正字1CD}</span>" if pd.notna(row.正字1CD) else ""}</div>'
+                for _, row in group.iterrows()
             ]
         )
         grouped_html += f"<div class='block'>{grid_items}</div>"
